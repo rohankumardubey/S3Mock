@@ -23,6 +23,7 @@ public class AwsHttpParameters {
 
   private static final String NOT = "!";
 
+  public static final String ACL = "acl";
   public static final String CONTINUATION_TOKEN = "continuation-token";
   public static final String DELETE = "delete";
   public static final String ENCODING_TYPE = "encoding-type";

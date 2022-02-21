@@ -28,6 +28,7 @@ import static com.adobe.testing.s3mock.util.AwsHttpHeaders.X_AMZ_METADATA_DIRECT
 import static com.adobe.testing.s3mock.util.AwsHttpHeaders.X_AMZ_SERVER_SIDE_ENCRYPTION;
 import static com.adobe.testing.s3mock.util.AwsHttpHeaders.X_AMZ_SERVER_SIDE_ENCRYPTION_AWS_KMS_KEY_ID;
 import static com.adobe.testing.s3mock.util.AwsHttpHeaders.X_AMZ_TAGGING;
+import static com.adobe.testing.s3mock.util.AwsHttpParameters.ACL;
 import static com.adobe.testing.s3mock.util.AwsHttpParameters.CONTINUATION_TOKEN;
 import static com.adobe.testing.s3mock.util.AwsHttpParameters.DELETE;
 import static com.adobe.testing.s3mock.util.AwsHttpParameters.ENCODING_TYPE;
@@ -938,6 +939,39 @@ public class FileStoreController {
       throw new S3Exception(INTERNAL_SERVER_ERROR.value(), "InternalServerError",
           "Error persisting object.");
     }
+  }
+
+  /**
+   * Adds an ACL to an object.
+   * Currently, this is a NO-OP.
+   *
+   * <p>https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectAcl.html</p>
+   *
+   * @param bucketName the Bucket in which to store the file in.
+   * @param request http servlet request.
+   *
+   * @return {@link ResponseEntity} with Status Code and empty ETag.
+   *
+   * @throws IOException in case of an error on storing the object.
+   */
+  @RequestMapping(
+      value = "/{bucketName:.+}/**",
+      params = {
+          ACL,
+      },
+      method = RequestMethod.PUT
+  )
+  public ResponseEntity<Void> putObjectAcl(@PathVariable final String bucketName,
+      @RequestHeader(value = CONTENT_TYPE, required = false) String contentType,
+      @RequestHeader(value = CONTENT_MD5, required = false) String contentMd5,
+      final HttpServletRequest request) throws IOException {
+    verifyBucketExistence(bucketName);
+
+    final String filename = filenameFrom(bucketName, request);
+
+    return ResponseEntity
+        .ok()
+        .build();
   }
 
   private static InputStream verifyMd5(InputStream inputStream, String contentMd5,
